@@ -165,20 +165,23 @@ def add_district(request):
 @api_view(['PATCH'])
 def update_district(request):
     district_id = request.POST.get('district_id', None)
+    state_id=request.POST.get('state_id',None)
     name = request.POST.get('name', None)
     rainfall_type = request.POST.get('rainfall_type', None)
-    if district_id is None or name is None or rainfall_type is None:
+    if district_id is None or state_id is None or  name is None or rainfall_type is None:
         context = {
-            'message': 'state_id/name/new_rainfall_type  is missing'
+            'message': 'district_id/state_id/name/new_rainfall_type  is missing'
         }
         return Response(context, status=status.HTTP_400_BAD_REQUEST)
     else:
         try:
             new_record = District.objects.get(id=district_id)
+            if state_id:
+                new_record.state_id=state_id
             if name:
-                new_record.name=name,
+                new_record.name=name
             if rainfall_type:
-                new_record.rainfall_type= rainfall_type,
+                new_record.rainfall_type= rainfall_type
                 new_record.save()
 
             context = {
@@ -193,7 +196,7 @@ def update_district(request):
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
         except IntegrityError:
             context = {
-                'message': 'Duplicate entry or invalid district ID'
+                'message': 'Duplicate entry or invalid district ID/sate_id'
             }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
         except ValueError:
